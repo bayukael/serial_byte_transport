@@ -1,19 +1,21 @@
 #pragma once
 
 #include <byte_transport/IByteTransport.h>
-#include <unordered_map>
 #include <memory>
+#include <serial_byte_transport/SerialByteTransportConfig.h>
+#include <serial_device/SerialDevice.h>
 #include <string>
+#include <unordered_map>
 
 namespace pendarlab::lib::comm
 {
   class SerialByteTransport : public IByteTransport
   {
+    SerialByteTransport(const SerialDevice& device);
+
   public:
-    SerialByteTransport(const SerialByteTransportConfig& cfg);
-    static std::shared_ptr<IByteTransport> create(const std::unordered_map<std::string, std::string>& config);
-    static ByteTransportFactory::ValidationResult validateConfig(const std::unordered_map<std::string, std::string>& config);
-    
+    static std::shared_ptr<IByteTransport> create(const SerialByteTransportConfig& cfg);
+
     int read(unsigned char* buf, unsigned int buf_size) override;
     int write(const unsigned char* buf, unsigned int length) override;
 

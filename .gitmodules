@@ -1,0 +1,6 @@
+[submodule "external/ByteTransport"]
+	path = external/byte_transport
+	url = git@github.com:bayukael/byte_transport.git
+[submodule "external/serial_device"]
+	path = external/serial_device
+	url = git@github.com:bayukael/serial_device.git

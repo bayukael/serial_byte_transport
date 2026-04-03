@@ -8,7 +8,10 @@ find_package(GTest CONFIG REQUIRED)
 
 add_library(pendarlab_comm_serial_byte_transport SHARED
   src/SerialByteTransport.cpp
+  src/SerialByteTransportConfig.cpp
 )
 target_include_directories(pendarlab_comm_serial_byte_transport PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/byte_transport/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/serial_device/include>
 )
