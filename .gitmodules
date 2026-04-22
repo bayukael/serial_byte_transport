@@ -1,4 +1,4 @@
-[submodule "external/ByteTransport"]
+[submodule "external/byte_transport"]
 	path = external/byte_transport
 	url = git@github.com:bayukael/byte_transport.git
 [submodule "external/serial_device"]
