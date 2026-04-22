@@ -26,35 +26,35 @@ namespace pendarlab::lib::comm
     }
     using BaudRate = transport::SerialDevice::BaudRate;
     switch (val_int) {
-      case 50: cfg.baud_rate = BaudRate::B_50;
-      case 75: cfg.baud_rate = BaudRate::B_75;
-      case 110: cfg.baud_rate = BaudRate::B_110;
-      case 134: cfg.baud_rate = BaudRate::B_134;
-      case 150: cfg.baud_rate = BaudRate::B_150;
-      case 200: cfg.baud_rate = BaudRate::B_200;
-      case 600: cfg.baud_rate = BaudRate::B_600;
-      case 1200: cfg.baud_rate = BaudRate::B_1200;
-      case 1800: cfg.baud_rate = BaudRate::B_1800;
-      case 2400: cfg.baud_rate = BaudRate::B_2400;
-      case 4800: cfg.baud_rate = BaudRate::B_4800;
-      case 9600: cfg.baud_rate = BaudRate::B_9600;
-      case 19200: cfg.baud_rate = BaudRate::B_19200;
-      case 38400: cfg.baud_rate = BaudRate::B_38400;
-      case 57600: cfg.baud_rate = BaudRate::B_57600;
-      case 115200: cfg.baud_rate = BaudRate::B_115200;
-      case 230400: cfg.baud_rate = BaudRate::B_230400;
-      case 460800: cfg.baud_rate = BaudRate::B_460800;
-      case 500000: cfg.baud_rate = BaudRate::B_500000;
-      case 576000: cfg.baud_rate = BaudRate::B_576000;
-      case 921600: cfg.baud_rate = BaudRate::B_921600;
-      case 1000000: cfg.baud_rate = BaudRate::B_1000000;
-      case 1152000: cfg.baud_rate = BaudRate::B_1152000;
-      case 1500000: cfg.baud_rate = BaudRate::B_1500000;
-      case 2000000: cfg.baud_rate = BaudRate::B_2000000;
-      case 2500000: cfg.baud_rate = BaudRate::B_2500000;
-      case 3000000: cfg.baud_rate = BaudRate::B_3000000;
-      case 3500000: cfg.baud_rate = BaudRate::B_3500000;
-      case 4000000: cfg.baud_rate = BaudRate::B_4000000;
+      case 50: cfg.baud_rate = BaudRate::B_50; break;
+      case 75: cfg.baud_rate = BaudRate::B_75; break;
+      case 110: cfg.baud_rate = BaudRate::B_110; break;
+      case 134: cfg.baud_rate = BaudRate::B_134; break;
+      case 150: cfg.baud_rate = BaudRate::B_150; break;
+      case 200: cfg.baud_rate = BaudRate::B_200; break;
+      case 600: cfg.baud_rate = BaudRate::B_600; break;
+      case 1200: cfg.baud_rate = BaudRate::B_1200; break;
+      case 1800: cfg.baud_rate = BaudRate::B_1800; break;
+      case 2400: cfg.baud_rate = BaudRate::B_2400; break;
+      case 4800: cfg.baud_rate = BaudRate::B_4800; break;
+      case 9600: cfg.baud_rate = BaudRate::B_9600; break;
+      case 19200: cfg.baud_rate = BaudRate::B_19200; break;
+      case 38400: cfg.baud_rate = BaudRate::B_38400; break;
+      case 57600: cfg.baud_rate = BaudRate::B_57600; break;
+      case 115200: cfg.baud_rate = BaudRate::B_115200; break;
+      case 230400: cfg.baud_rate = BaudRate::B_230400; break;
+      case 460800: cfg.baud_rate = BaudRate::B_460800; break;
+      case 500000: cfg.baud_rate = BaudRate::B_500000; break;
+      case 576000: cfg.baud_rate = BaudRate::B_576000; break;
+      case 921600: cfg.baud_rate = BaudRate::B_921600; break;
+      case 1000000: cfg.baud_rate = BaudRate::B_1000000; break;
+      case 1152000: cfg.baud_rate = BaudRate::B_1152000; break;
+      case 1500000: cfg.baud_rate = BaudRate::B_1500000; break;
+      case 2000000: cfg.baud_rate = BaudRate::B_2000000; break;
+      case 2500000: cfg.baud_rate = BaudRate::B_2500000; break;
+      case 3000000: cfg.baud_rate = BaudRate::B_3000000; break;
+      case 3500000: cfg.baud_rate = BaudRate::B_3500000; break;
+      case 4000000: cfg.baud_rate = BaudRate::B_4000000; break;
       default: return false;
     }
     return true;
@@ -70,10 +70,10 @@ namespace pendarlab::lib::comm
     }
     using NumOfBitsPerByte = transport::SerialDevice::NumOfBitsPerByte;
     switch (val_int) {
-      case 5: cfg.num_of_bits_per_byte = NumOfBitsPerByte::FIVE;
-      case 6: cfg.num_of_bits_per_byte = NumOfBitsPerByte::SIX;
-      case 7: cfg.num_of_bits_per_byte = NumOfBitsPerByte::SEVEN;
-      case 8: cfg.num_of_bits_per_byte = NumOfBitsPerByte::EIGHT;
+      case 5: cfg.num_of_bits_per_byte = NumOfBitsPerByte::FIVE; break;
+      case 6: cfg.num_of_bits_per_byte = NumOfBitsPerByte::SIX; break;
+      case 7: cfg.num_of_bits_per_byte = NumOfBitsPerByte::SEVEN; break;
+      case 8: cfg.num_of_bits_per_byte = NumOfBitsPerByte::EIGHT; break;
       default: return false;
     }
     return true;
@@ -82,11 +82,11 @@ namespace pendarlab::lib::comm
   static bool parseParity(SerialByteTransportConfig& cfg, const std::string& val_str)
   {
     using Parity = transport::SerialDevice::Parity;
-    if (val_str == "NONE") {
+    if (val_str == "none") {
       cfg.parity = Parity::NONE;
-    } else if (val_str == "ODD") {
+    } else if (val_str == "odd") {
       cfg.parity = Parity::ODD;
-    } else if (val_str == "EVEN") {
+    } else if (val_str == "even") {
       cfg.parity = Parity::EVEN;
     } else {
       return false;
@@ -104,8 +104,8 @@ namespace pendarlab::lib::comm
     }
     using StopBits = transport::SerialDevice::StopBits;
     switch (val_int) {
-      case 1: cfg.stop_bits = StopBits::ONE;
-      case 2: cfg.stop_bits = StopBits::TWO;
+      case 1: cfg.stop_bits = StopBits::ONE; break;
+      case 2: cfg.stop_bits = StopBits::TWO; break;
       default: return false;
     }
     return true;
