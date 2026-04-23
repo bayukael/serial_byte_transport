@@ -11,8 +11,6 @@ namespace pendarlab::lib::comm
 {
   class SerialByteTransport : public IByteTransport
   {
-    SerialByteTransport(const SerialDevice& device);
-
   public:
     static std::shared_ptr<IByteTransport> create(const SerialByteTransportConfig& cfg);
 
@@ -20,6 +18,7 @@ namespace pendarlab::lib::comm
     int write(const unsigned char* buf, unsigned int length) override;
 
   private:
+    SerialByteTransport(std::unique_ptr<SerialDevice> device);
     struct SerialByteTransportImpl;
     std::unique_ptr<SerialByteTransportImpl> p_impl_;
   };

@@ -4,10 +4,13 @@
 #include <byte_transport/IByteTransport.h>
 #include <serial_byte_transport/SerialByteTransportConfig.h>
 #include <serial_device/SerialDevice.h>
+#include <memory>
 
-namespace{
+namespace
+{
   using namespace pendarlab::lib::comm;
-  std::shared_ptr<IByteTransport> create(const std::unordered_map<std::string, std::string>& config){
+  std::shared_ptr<IByteTransport> create(const std::unordered_map<std::string, std::string>& config)
+  {
     SerialByteTransportConfig::ParseResult result_serial = SerialByteTransportConfig::parse(config);
     if (!result_serial.ok) {
       return nullptr;
@@ -26,25 +29,35 @@ namespace{
 
     return result_factory;
   }
-}
+} // namespace
 
 namespace pendarlab::lib::comm
 {
-  struct SerialByteTransport::SerialByteTransportImpl{
-    transport::SerialDevice serial_dev_;
+  struct SerialByteTransport::SerialByteTransportImpl {
+    SerialByteTransportImpl(std::unique_ptr<SerialDevice> device);
+    std::unique_ptr<SerialDevice> serial_dev_;
   };
-  
+
+  SerialByteTransport::SerialByteTransportImpl::SerialByteTransportImpl(std::unique_ptr<SerialDevice> device) : serial_dev_(std::move(device))
+  {
+  }
+
+  SerialByteTransport::SerialByteTransport(std::unique_ptr<SerialDevice> device) : p_impl_(std::make_unique<SerialByteTransport::SerialByteTransportImpl>(std::move(device)))
+  {
+  }
+
   std::shared_ptr<IByteTransport> SerialByteTransport::create(const SerialByteTransportConfig& cfg)
   {
-    SerialDevice device;
-    device.setBaudRate(cfg.baud_rate);
-    device.setNumOfBitsPerByte(cfg.num_of_bits_per_byte);
-    device.setParity(cfg.parity);
-    device.setStopBits(cfg.stop_bits);
-    device.setHardwareFlowControl(cfg.use_hardware_flow_control);
-    device.setSoftwareFlowControl(cfg.use_software_flow_control);
-    if(device.connect(cfg.device_path, SerialDevice::RWMode::BOTH)){
-      return std::make_shared<SerialByteTransport>(SerialByteTransport(device));
+    auto device = std::make_unique<SerialDevice>();
+    // SerialDevice device;
+    device->setBaudRate(cfg.baud_rate);
+    device->setNumOfBitsPerByte(cfg.num_of_bits_per_byte);
+    device->setParity(cfg.parity);
+    device->setStopBits(cfg.stop_bits);
+    device->setHardwareFlowControl(cfg.use_hardware_flow_control);
+    device->setSoftwareFlowControl(cfg.use_software_flow_control);
+    if (device->connect(cfg.device_path, SerialDevice::RWMode::BOTH)) {
+      return std::make_shared<SerialByteTransport>(SerialByteTransport(std::move(device)));
     }
     return nullptr;
   }
