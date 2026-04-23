@@ -115,6 +115,8 @@ namespace pendarlab::lib::comm
   {
     if (val_str == "true") {
       cfg.use_hardware_flow_control = true;
+    } else if (val_str == "false") {
+      cfg.use_hardware_flow_control = false;
     } else {
       return false;
     }
@@ -125,6 +127,8 @@ namespace pendarlab::lib::comm
   {
     if (val_str == "true") {
       cfg.use_software_flow_control = true;
+    } else if (val_str == "false") {
+      cfg.use_software_flow_control = false;
     } else {
       return false;
     }
@@ -151,7 +155,7 @@ namespace pendarlab::lib::comm
       }
       const std::string& config_val = it->second;
 
-      if (spec.parse_fn(parsed_config, config_val)) {
+      if (!spec.parse_fn(parsed_config, config_val)) { // If parsing for a particular field has failed, then
         if (spec.presence == FieldSpec::Presence::REQUIRED) {
           result.ok = false;
         }
