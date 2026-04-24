@@ -2,32 +2,33 @@
 
 #include <byte_transport/ByteTransportFactory.h>
 #include <byte_transport/IByteTransport.h>
+#include <iostream>
+#include <memory>
 #include <serial_byte_transport/SerialByteTransportConfig.h>
 #include <serial_device/SerialDevice.h>
-#include <memory>
 
 namespace
 {
   using namespace pendarlab::lib::comm;
   std::shared_ptr<IByteTransport> create(const std::unordered_map<std::string, std::string>& config)
   {
-    SerialByteTransportConfig::ParseResult result_serial = SerialByteTransportConfig::parse(config);
-    if (!result_serial.ok) {
+    SerialByteTransportConfig::ParseResult parse_result = SerialByteTransportConfig::parse(config);
+    if (!parse_result.ok) {
       return nullptr;
     }
-    return SerialByteTransport::create(result_serial.cfg.value());
+    return SerialByteTransport::create(parse_result.cfg.value());
   }
 
   ByteTransportFactory::ValidationResult validateConfig(const std::unordered_map<std::string, std::string>& config)
   {
-    SerialByteTransportConfig::ParseResult result_serial = SerialByteTransportConfig::parse(config);
+    SerialByteTransportConfig::ParseResult parse_result = SerialByteTransportConfig::parse(config);
 
     // Translate validation result from SerialByteTransportConfig format to ByteTransportFactory format;
-    ByteTransportFactory::ValidationResult result_factory;
-    result_factory.ok = result_serial.ok;
-    result_factory.msg = result_serial.msg;
+    ByteTransportFactory::ValidationResult parse_result_factory;
+    parse_result_factory.ok = parse_result.ok;
+    parse_result_factory.msg = parse_result.msg;
 
-    return result_factory;
+    return parse_result_factory;
   }
 } // namespace
 
@@ -38,18 +39,19 @@ namespace pendarlab::lib::comm
     std::unique_ptr<SerialDevice> serial_dev_;
   };
 
-  SerialByteTransport::SerialByteTransportImpl::SerialByteTransportImpl(std::unique_ptr<SerialDevice> device) : serial_dev_(std::move(device))
+  SerialByteTransport::SerialByteTransportImpl::SerialByteTransportImpl(std::unique_ptr<SerialDevice> device) :
+      serial_dev_(std::move(device))
   {
   }
 
-  SerialByteTransport::SerialByteTransport(std::unique_ptr<SerialDevice> device) : p_impl_(std::make_unique<SerialByteTransport::SerialByteTransportImpl>(std::move(device)))
+  SerialByteTransport::SerialByteTransport(std::unique_ptr<SerialDevice> device) :
+      p_impl_(std::make_unique<SerialByteTransport::SerialByteTransportImpl>(std::move(device)))
   {
   }
 
   std::shared_ptr<IByteTransport> SerialByteTransport::create(const SerialByteTransportConfig& cfg)
   {
     auto device = std::make_unique<SerialDevice>();
-    // SerialDevice device;
     device->setBaudRate(cfg.baud_rate);
     device->setNumOfBitsPerByte(cfg.num_of_bits_per_byte);
     device->setParity(cfg.parity);
@@ -64,12 +66,26 @@ namespace pendarlab::lib::comm
 
   int SerialByteTransport::read(unsigned char* buf, unsigned int buf_size)
   {
-    return 0;
+    if (!p_impl_->serial_dev_) { // If there is no serial device
+      return -1;
+    }
+    int ret_val = p_impl_->serial_dev_->readData(buf, buf_size);
+    if (ret_val < 0) {
+      return -1;
+    }
+    return ret_val;
   }
 
   int SerialByteTransport::write(const unsigned char* buf, unsigned int length)
   {
-    return 0;
+    if (!p_impl_->serial_dev_) { // If there is no serial device
+      return -1;
+    }
+    int ret_val = p_impl_->serial_dev_->writeData(buf, length);
+    if (ret_val < 0) {
+      return -1;
+    }
+    return ret_val;
   }
 } // namespace pendarlab::lib::comm
 
