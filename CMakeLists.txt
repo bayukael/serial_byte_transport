@@ -39,14 +39,26 @@ add_executable(serial_byte_transport_test test/serial_byte_transport_test.cpp)
 target_include_directories(serial_byte_transport_test PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/byte_transport/include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/serial_device/include>
 )
 target_link_libraries(serial_byte_transport_test
   PRIVATE pendarlab_comm_byte_transport
-  PRIVATE pendarlab_comm_serial_byte_transport
   PRIVATE gtest
 )
 target_compile_definitions(serial_byte_transport_test
   PRIVATE SERIAL_BYTE_TRANSPORT_LIB_PATH="$<TARGET_FILE:pendarlab_comm_serial_byte_transport>"
 )
 add_dependencies(serial_byte_transport_test pendarlab_comm_serial_byte_transport)
+
+add_executable(serial_byte_transport_integration_test test/serial_byte_transport_integration_test.cpp)
+target_include_directories(serial_byte_transport_integration_test PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/byte_transport/include>
+)
+target_link_libraries(serial_byte_transport_integration_test
+  PRIVATE pendarlab_comm_byte_transport
+  PRIVATE gtest
+)
+target_compile_definitions(serial_byte_transport_integration_test
+  PRIVATE SERIAL_BYTE_TRANSPORT_LIB_PATH="$<TARGET_FILE:pendarlab_comm_serial_byte_transport>"
+)
+add_dependencies(serial_byte_transport_integration_test pendarlab_comm_serial_byte_transport)
