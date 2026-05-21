@@ -10,7 +10,7 @@
 namespace
 {
   using namespace pendarlab::lib::comm;
-  std::shared_ptr<IByteTransport> create(const std::unordered_map<std::string, std::string>& config)
+  std::unique_ptr<IByteTransport> create(const std::unordered_map<std::string, std::string>& config)
   {
     SerialByteTransportConfig::ParseResult parse_result = SerialByteTransportConfig::parse(config);
     if (!parse_result.ok) {
@@ -49,7 +49,7 @@ namespace pendarlab::lib::comm
   {
   }
 
-  std::shared_ptr<IByteTransport> SerialByteTransport::create(const SerialByteTransportConfig& cfg)
+  std::unique_ptr<IByteTransport> SerialByteTransport::create(const SerialByteTransportConfig& cfg)
   {
     auto device = std::make_unique<SerialDevice>();
     device->setBaudRate(cfg.baud_rate);
@@ -59,7 +59,7 @@ namespace pendarlab::lib::comm
     device->setHardwareFlowControl(cfg.use_hardware_flow_control);
     device->setSoftwareFlowControl(cfg.use_software_flow_control);
     if (device->connect(cfg.device_path, SerialDevice::RWMode::BOTH)) {
-      return std::make_shared<SerialByteTransport>(SerialByteTransport(std::move(device)));
+      return std::make_unique<SerialByteTransport>(SerialByteTransport(std::move(device)));
     }
     return nullptr;
   }

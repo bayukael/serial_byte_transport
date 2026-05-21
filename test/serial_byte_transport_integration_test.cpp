@@ -17,16 +17,28 @@ using ByteTransportFactory = pendarlab::lib::comm::ByteTransportFactory;
 namespace
 {
   struct ReaderConfig {
-    std::shared_ptr<pendarlab::lib::comm::IByteTransport> bt;
+    ReaderConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p);
+    ReaderConfig(ReaderConfig&&) = default;
+    ReaderConfig& operator=(ReaderConfig&&) = default;
+    ~ReaderConfig();
+    std::unique_ptr<pendarlab::lib::comm::IByteTransport> bt;
     unsigned int buf_size;
     unsigned int read_delay_us;
     size_t expected_size;
     unsigned int timeout_in_ms;
   };
+
+  ReaderConfig::ReaderConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p) : bt(std::move(p)){}
+  ReaderConfig::~ReaderConfig(){}
+
   class SerialByteTransportReader
   {
   public:
-    SerialByteTransportReader(const ReaderConfig& c);
+    SerialByteTransportReader(ReaderConfig&&);
+    SerialByteTransportReader() = default;
+    ~SerialByteTransportReader() = default;
+    SerialByteTransportReader(SerialByteTransportReader&&) = default;
+    SerialByteTransportReader& operator=(SerialByteTransportReader&&) = default;
     static void routine(SerialByteTransportReader&);
     std::vector<uint8_t> data();
     void stop_reading();
@@ -37,22 +49,19 @@ namespace
     std::atomic<bool> keep_reading_;
   };
 
-  SerialByteTransportReader::SerialByteTransportReader(const ReaderConfig& c) : cfg_(c), keep_reading_(true)
-  {
-  }
+  SerialByteTransportReader::SerialByteTransportReader(ReaderConfig&& c) : cfg_(std::move(c)){}
 
   void SerialByteTransportReader::routine(SerialByteTransportReader& reader)
   {
     auto tp_now = std::chrono::steady_clock::now();
     auto timeout = tp_now + std::chrono::milliseconds(reader.cfg_.timeout_in_ms);
     while (reader.keep_reading_ || tp_now > timeout) {
-
       uint8_t buf[reader.cfg_.buf_size];
       int bytes_read = reader.cfg_.bt->read(buf, reader.cfg_.buf_size);
       for (size_t i = 0; i < bytes_read; i++) {
         reader.data_read_.push_back(buf[i]);
       }
-      if(reader.data_read_.size() >= reader.cfg_.expected_size){
+      if (reader.data_read_.size() >= reader.cfg_.expected_size) {
         reader.keep_reading_ = false;
       }
       std::this_thread::sleep_for(std::chrono::microseconds(reader.cfg_.read_delay_us));
@@ -71,31 +80,45 @@ namespace
   }
 
   struct WriterConfig {
-    std::shared_ptr<pendarlab::lib::comm::IByteTransport> bt;
+    WriterConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p);
+    WriterConfig(WriterConfig&&) = default;
+    WriterConfig& operator=(WriterConfig&&) = default;
+    ~WriterConfig();
+    std::unique_ptr<pendarlab::lib::comm::IByteTransport> bt;
     std::vector<uint8_t> data_to_send;
     unsigned int num_of_bytes_on_each_write;
     int write_delay_us;
   };
+
+  WriterConfig::WriterConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p) : bt(std::move(p))
+  {
+  }
+  WriterConfig::~WriterConfig()
+  {
+  }
+
   class SerialByteTransportWriter
   {
   public:
-    SerialByteTransportWriter(const WriterConfig&);
+    SerialByteTransportWriter(WriterConfig&&);
+    SerialByteTransportWriter() = default;
+    ~SerialByteTransportWriter() = default;
+    SerialByteTransportWriter(SerialByteTransportWriter&&) = default;
+    SerialByteTransportWriter& operator=(SerialByteTransportWriter&&) = default;
     static void routine(SerialByteTransportWriter&);
 
   private:
     WriterConfig cfg_;
   };
 
-  SerialByteTransportWriter::SerialByteTransportWriter(const WriterConfig& c) : cfg_(c)
-  {
-  }
+  SerialByteTransportWriter::SerialByteTransportWriter(WriterConfig&& c) : cfg_(std::move(c)){}
 
   void SerialByteTransportWriter::routine(SerialByteTransportWriter& writer)
   {
     std::vector<uint8_t> bytes;
     for (size_t i = 0; i < writer.cfg_.data_to_send.size(); i++) {
       bytes.push_back(writer.cfg_.data_to_send[i]);
-      if (bytes.size() == writer.cfg_.num_of_bytes_on_each_write || i == writer.cfg_.data_to_send.size()-1 ) {
+      if (bytes.size() == writer.cfg_.num_of_bytes_on_each_write || i == writer.cfg_.data_to_send.size() - 1) {
         writer.cfg_.bt->write(&bytes[0], bytes.size());
         bytes.clear();
         std::this_thread::sleep_for(std::chrono::microseconds(writer.cfg_.write_delay_us));
@@ -129,8 +152,8 @@ namespace
     void TearDown() override {}
 
     std::unordered_map<std::string, std::string> umap_config;
-    std::shared_ptr<pendarlab::lib::comm::IByteTransport> byte_transport_1;
-    std::shared_ptr<pendarlab::lib::comm::IByteTransport> byte_transport_2;
+    std::unique_ptr<pendarlab::lib::comm::IByteTransport> byte_transport_1;
+    std::unique_ptr<pendarlab::lib::comm::IByteTransport> byte_transport_2;
 
     void* plugin_handle_ = nullptr;
   };
@@ -181,11 +204,12 @@ namespace
     for (size_t i = 0; i < 10000; i++) {
       data.push_back((uint8_t)i);
     }
-    ReaderConfig reader_cfg = { .bt = byte_transport_2, .buf_size = 50, .read_delay_us = 100, .expected_size=data.size(), .timeout_in_ms=500 };
-    WriterConfig writer_cfg = { .bt = byte_transport_1, .data_to_send = data, .num_of_bytes_on_each_write = 200, .write_delay_us = 20 };
 
-    SerialByteTransportReader reader(reader_cfg);
-    SerialByteTransportWriter writer(writer_cfg);
+    ReaderConfig reader_cfg(std::move(byte_transport_2));
+    WriterConfig writer_cfg(std::move(byte_transport_1));
+
+    SerialByteTransportReader reader(std::move(reader_cfg));
+    SerialByteTransportWriter writer(std::move(writer_cfg));
 
     std::thread read_thread = std::thread(&SerialByteTransportReader::routine, std::ref(reader));
     std::thread write_thread = std::thread(&SerialByteTransportWriter::routine, std::ref(writer));

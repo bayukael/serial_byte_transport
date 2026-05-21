@@ -12,7 +12,7 @@ namespace pendarlab::lib::comm
   class SerialByteTransport : public IByteTransport
   {
   public:
-    static std::shared_ptr<IByteTransport> create(const SerialByteTransportConfig& cfg);
+    static std::unique_ptr<IByteTransport> create(const SerialByteTransportConfig& cfg);
 
     int read(unsigned char* buf, unsigned int buf_size) override;
     int write(const unsigned char* buf, unsigned int length) override;
