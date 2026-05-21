@@ -6,6 +6,7 @@
 #include <serial_device/SerialDevice.h>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace pendarlab::lib::comm
 {
@@ -27,7 +28,7 @@ namespace pendarlab::lib::comm
 
   struct SerialByteTransportConfig::ParseResult {
     bool ok;
-    std::string msg;
+    std::vector<std::string> msg;
     std::optional<SerialByteTransportConfig> cfg;
   };
 

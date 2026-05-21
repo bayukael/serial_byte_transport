@@ -139,7 +139,6 @@ namespace pendarlab::lib::comm
   {
     SerialByteTransportConfig::ParseResult result;
     result.ok = true;
-    result.msg = "";
 
     using namespace transport;
     SerialByteTransportConfig parsed_config;
@@ -149,7 +148,7 @@ namespace pendarlab::lib::comm
       if (it == config.end()) {
         if (spec.presence == FieldSpec::Presence::REQUIRED) {
           result.ok = false;
-          result.msg += "Missing required key: [" + key + "]\n";
+          result.msg.push_back("Missing required key: [" + key + "]");
         }
         continue;
       }
@@ -159,7 +158,7 @@ namespace pendarlab::lib::comm
         if (spec.presence == FieldSpec::Presence::REQUIRED) {
           result.ok = false;
         }
-        result.msg += "Bad value for key '" + key + "': " + config_val + "\n";
+        result.msg.push_back("Bad value for key '" + key + "': " + config_val);
         continue;
       }
     }
