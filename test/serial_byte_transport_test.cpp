@@ -9,7 +9,7 @@ namespace
   class SerialByteTransportTest : public testing::Test
   {
   protected:
-    using IByteTransport = pendarlab::lib::comm::IByteTransport;
+    using ByteTransport = pendarlab::lib::comm::ByteTransport;
     SerialByteTransportTest() {}
 
     void SetUp() override

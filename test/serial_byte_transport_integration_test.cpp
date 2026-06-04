@@ -17,18 +17,18 @@ using ByteTransportFactory = pendarlab::lib::comm::ByteTransportFactory;
 namespace
 {
   struct ReaderConfig {
-    ReaderConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p);
+    ReaderConfig(std::unique_ptr<pendarlab::lib::comm::ByteTransport> p);
     ReaderConfig(ReaderConfig&&) = default;
     ReaderConfig& operator=(ReaderConfig&&) = default;
     ~ReaderConfig();
-    std::unique_ptr<pendarlab::lib::comm::IByteTransport> bt;
+    std::unique_ptr<pendarlab::lib::comm::ByteTransport> bt;
     unsigned int buf_size;
     unsigned int read_delay_us;
     size_t expected_size;
     unsigned int timeout_in_ms;
   };
 
-  ReaderConfig::ReaderConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p) : bt(std::move(p)){}
+  ReaderConfig::ReaderConfig(std::unique_ptr<pendarlab::lib::comm::ByteTransport> p) : bt(std::move(p)){}
   ReaderConfig::~ReaderConfig(){}
 
   class SerialByteTransportReader
@@ -80,17 +80,17 @@ namespace
   }
 
   struct WriterConfig {
-    WriterConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p);
+    WriterConfig(std::unique_ptr<pendarlab::lib::comm::ByteTransport> p);
     WriterConfig(WriterConfig&&) = default;
     WriterConfig& operator=(WriterConfig&&) = default;
     ~WriterConfig();
-    std::unique_ptr<pendarlab::lib::comm::IByteTransport> bt;
+    std::unique_ptr<pendarlab::lib::comm::ByteTransport> bt;
     std::vector<uint8_t> data_to_send;
     unsigned int num_of_bytes_on_each_write;
     int write_delay_us;
   };
 
-  WriterConfig::WriterConfig(std::unique_ptr<pendarlab::lib::comm::IByteTransport> p) : bt(std::move(p))
+  WriterConfig::WriterConfig(std::unique_ptr<pendarlab::lib::comm::ByteTransport> p) : bt(std::move(p))
   {
   }
   WriterConfig::~WriterConfig()
@@ -152,8 +152,8 @@ namespace
     void TearDown() override {}
 
     std::unordered_map<std::string, std::string> umap_config;
-    std::unique_ptr<pendarlab::lib::comm::IByteTransport> byte_transport_1;
-    std::unique_ptr<pendarlab::lib::comm::IByteTransport> byte_transport_2;
+    std::unique_ptr<pendarlab::lib::comm::ByteTransport> byte_transport_1;
+    std::unique_ptr<pendarlab::lib::comm::ByteTransport> byte_transport_2;
 
     void* plugin_handle_ = nullptr;
   };
@@ -172,7 +172,7 @@ namespace
   }
 
   // According to https://man7.org/linux/man-pages/man3/termios.3.html, Linux capped the maximum bytes to read to 4095 bytes.
-  // Therefore, bulk transfer tests are intentionally kept under this limit. Callers of IByteTransport are responsible for
+  // Therefore, bulk transfer tests are intentionally kept under this limit. Callers of ByteTransport are responsible for
   // handling larger payloads if needed.
   TEST_F(SerialByteTransportIntegrationTest, BulkReadShouldReadAllBulkWrite)
   {

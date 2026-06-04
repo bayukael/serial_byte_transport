@@ -9,10 +9,10 @@
 
 namespace pendarlab::lib::comm
 {
-  class SerialByteTransport : public IByteTransport
+  class SerialByteTransport : public ByteTransport
   {
   public:
-    static std::unique_ptr<IByteTransport> create(const SerialByteTransportConfig& cfg);
+    static std::unique_ptr<ByteTransport> create(const SerialByteTransportConfig& cfg);
 
     int read(unsigned char* buf, unsigned int buf_size) override;
     int write(const unsigned char* buf, unsigned int length) override;
