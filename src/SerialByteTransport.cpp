@@ -1,7 +1,7 @@
 #include "serial_byte_transport/SerialByteTransport.h"
 
 #include <byte_transport/ByteTransportFactory.h>
-#include <byte_transport/IByteTransport.h>
+#include <byte_transport/ByteTransport.h>
 #include <iostream>
 #include <memory>
 #include <serial_byte_transport/SerialByteTransportConfig.h>

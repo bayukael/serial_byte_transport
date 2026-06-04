@@ -1,6 +1,6 @@
 #include <atomic>
 #include <byte_transport/ByteTransportFactory.h>
-#include <byte_transport/IByteTransport.h>
+#include <byte_transport/ByteTransport.h>
 #include <chrono>
 #include <dlfcn.h>
 #include <gtest/gtest.h>
