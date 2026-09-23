@@ -14,7 +14,6 @@ find_package(GTest CONFIG REQUIRED)
 
 add_library(SerialByteTransport SHARED
   src/SerialByteTransport.cpp
-  src/SerialByteTransportConfig.cpp
   src/SerialByteTransportDefinition.cpp
 )
 target_include_directories(SerialByteTransport PUBLIC 
