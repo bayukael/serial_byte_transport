@@ -8,8 +8,8 @@ set(NAMESPACE pendarlab)
 set(PACKAGE_FILENAME serial_byte_transport)
 set(PACKAGE_NAME PendarlabSerialByteTransport)
 
-find_package(PendarlabByteTransport REQUIRED)
-find_package(PendarlabSerialDevice REQUIRED)
+find_package(PendarlabByteTransport 1.0.0 REQUIRED)
+find_package(PendarlabSerialDevice 1.0.0 REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
 add_library(SerialByteTransport SHARED
