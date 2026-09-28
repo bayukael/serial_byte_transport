@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
-project(pendarlab_lib_comm_serial_byte_transport)
+project(pendarlab_lib_comm_serial_byte_transport VERSION 1.0.0)
 
-set(PROJECT_VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 set(NAMESPACE pendarlab)
@@ -12,11 +11,18 @@ find_package(PendarlabByteTransport 1.0.0 REQUIRED)
 find_package(PendarlabSerialDevice 1.0.0 REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/serial_byte_transport/Version.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/serial_byte_transport/Version.h
+    @ONLY
+)
+
 add_library(SerialByteTransport SHARED
   src/SerialByteTransport.cpp
   src/SerialByteTransportDefinition.cpp
 )
 target_include_directories(SerialByteTransport PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
     $<INSTALL_INTERFACE:include> 
 )
@@ -25,7 +31,11 @@ target_link_libraries(SerialByteTransport
   PUBLIC pendarlab::SerialDevice
 )
 add_library(${NAMESPACE}::SerialByteTransport ALIAS SerialByteTransport)
-set_target_properties(SerialByteTransport PROPERTIES OUTPUT_NAME pendarlab-serial_byte_transport)
+set_target_properties(SerialByteTransport PROPERTIES
+    OUTPUT_NAME pendarlab-serial_byte_transport
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
 
 
 ##############################################################################
@@ -43,6 +53,11 @@ install(
 install(
 	DIRECTORY include/
 	DESTINATION include
+	PATTERN "*.in" EXCLUDE
+)
+install(
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/include/serial_byte_transport/Version.h
+	DESTINATION include/serial_byte_transport
 )
 install(
 	EXPORT ${TARGET_EXPORT_NAME}

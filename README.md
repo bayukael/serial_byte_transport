@@ -64,6 +64,21 @@ find_package(PendarlabSerialByteTransport REQUIRED)
 target_link_libraries(my_app PRIVATE pendarlab::SerialByteTransport)
 ```
 
+## Versioning
+
+The library version is declared once in `CMakeLists.txt` (`project(... VERSION x.y.z)`). At configure time `configure_file()` fills in `include/serial_byte_transport/Version.h.in` to produce `Version.h`, which exposes the version both as preprocessor macros and as `constexpr` constants in `namespace pendarlab::lib::comm`:
+
+```cpp
+#include <serial_byte_transport/Version.h>
+
+using namespace pendarlab::lib::comm;
+// versionMajor, versionMinor, versionPatch, version (const char*)
+```
+
+The shared library also carries the version via CMake's `VERSION`/`SOVERSION` properties (`libpendarlab-serial_byte_transport.so -> .so.1 -> .so.1.0.0`), and `write_basic_package_version_file()` generates a `PendarlabSerialByteTransportConfigVersion.cmake` so `find_package()` can enforce `SameMajorVersion` compatibility.
+
+The version is not appended to the install location; to keep multiple versions side by side, install each into its own prefix (e.g. `<prefix>/1.0.0/`) and point `CMAKE_PREFIX_PATH` at the one you want.
+
 Register the transport with a `byte_transport::Registry` under a type name, then create it from config:
 
 ```cpp
